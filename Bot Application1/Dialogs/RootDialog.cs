@@ -8,6 +8,7 @@ namespace HealthBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        int prev = 0;
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(MessageReceivedAsync);
@@ -23,9 +24,22 @@ namespace HealthBot.Dialogs
             int length = (activity.Text ?? string.Empty).Length;
 
             // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            string reply = $"You sent {activity.Text} which was {length} characters. ";
+            reply += prev == 0 ? "" : $"You previously sent {prev} characters";
+            prev = length;
+            await context.PostAsync(reply);
 
             context.Wait(MessageReceivedAsync);
+        }
+
+        public enum cars
+        {
+            Ford,
+            Mercedes_Benz,
+            Toyota,
+            Honda,
+            Mazda,
+            Lexus
         }
     }
 }
